@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { mockChild, updateChild } from '../utils/data';
+import { mockChild, updateChild, calculateAge } from '../utils/data';
 import { Child, CreateChildRequest } from '../types';
 
 export const getChild = async (req: Request, res: Response) => {
@@ -21,7 +21,8 @@ export const createChild = async (req: Request<{}, Child, CreateChildRequest>, r
     
     const newChild: Child = {
       ...req.body,
-      id: Date.now().toString()
+      id: Date.now().toString(),
+      age: calculateAge(req.body.birthDate)
     };
     
     setTimeout(() => {
@@ -38,8 +39,13 @@ export const updateChildData = async (req: Request<{}, Child, Child>, res: Respo
   try {
     console.log('API: Updating child data', req.body);
     
+    const updatedChild = {
+      ...req.body,
+      age: req.body.birthDate ? calculateAge(req.body.birthDate) : req.body.age
+    };
+    
     setTimeout(() => {
-      updateChild(req.body);
+      updateChild(updatedChild);
       res.json(mockChild);
     }, 500);
   } catch (error) {

@@ -3,6 +3,7 @@ export interface Child {
   name: string;
   birthDate: string;
   age: string;
+  gender?: 'male' | 'female';
 }
 
 export interface Activity {
@@ -78,4 +79,48 @@ export interface CreateEventRequest {
 
 export interface UpdateEventRequest extends Partial<CreateEventRequest> {
   id: string;
+}
+
+// Growth measurement types
+export interface GrowthMeasurement {
+  id: string;
+  date: string; // ISO date string
+  ageInDays: number; // Age in days from birth
+  height?: number; // in cm
+  weight?: number; // in grams
+  headCircumference?: number; // in cm
+  notes?: string;
+  measuredBy?: string; // BVC, hemma, etc.
+  childId: string; // Reference to child
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateGrowthMeasurementRequest {
+  date: string;
+  height?: number;
+  weight?: number;
+  headCircumference?: number;
+  notes?: string;
+  measuredBy?: string;
+}
+
+export interface UpdateGrowthMeasurementRequest extends Partial<CreateGrowthMeasurementRequest> {
+  id: string;
+}
+
+export interface GrowthStats {
+  totalMeasurements: number;
+  latestMeasurement?: GrowthMeasurement;
+  growthTrends: {
+    heightGrowthRate?: number; // cm per month
+    weightGrowthRate?: number; // grams per month
+    headGrowthRate?: number; // cm per month
+  };
+  percentileHistory: {
+    date: string;
+    heightPercentile?: number;
+    weightPercentile?: number;
+    headPercentile?: number;
+  }[];
 }

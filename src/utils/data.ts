@@ -1,4 +1,4 @@
-import { Child, Activity } from '../types';
+import { Child, Activity, CalendarEvent, GrowthMeasurement, EventType } from '../types';
 
 const today = new Date();
 const todayISO = today.toISOString().split('T')[0];
@@ -10,7 +10,8 @@ export let mockChild: Child = {
   id: '1',
   name: 'Ella',
   birthDate: '2024-04-10',
-  age: '3 månader, 2 dagar'
+  age: '3 månader, 2 dagar',
+  gender: 'female'
 };
 
 export let mockActivities: Activity[] = [
@@ -136,6 +137,81 @@ export let mockActivities: Activity[] = [
   }
 ];
 
+// Mock calendar events
+export let mockCalendarEvents: CalendarEvent[] = [
+  {
+    id: '1',
+    title: 'BVC-besök',
+    description: 'Rutinkontroll med sköterska',
+    startDate: '2024-07-30T10:00:00.000Z',
+    endDate: '2024-07-30T11:00:00.000Z',
+    allDay: false,
+    type: EventType.BVC,
+    location: 'Vårdcentralen',
+    reminderMinutes: 30,
+    createdBy: 'user-1',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: '2',
+    title: 'Vaccination',
+    description: '3-månadersspruta',
+    startDate: '2024-08-05T14:30:00.000Z',
+    endDate: '2024-08-05T15:00:00.000Z',
+    allDay: false,
+    type: EventType.VACCINATION,
+    location: 'BVC',
+    reminderMinutes: 60,
+    createdBy: 'user-1',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
+// Mock growth measurements
+export let mockGrowthMeasurements: GrowthMeasurement[] = [
+  {
+    id: '1',
+    date: '2024-04-10',
+    ageInDays: 0,
+    height: 49.5,
+    weight: 3200,
+    headCircumference: 34.2,
+    notes: 'Födelse',
+    measuredBy: 'BB',
+    childId: '1',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: '2',
+    date: '2024-05-10',
+    ageInDays: 30,
+    height: 53.1,
+    weight: 4100,
+    headCircumference: 36.8,
+    notes: '1-månaderskontroll',
+    measuredBy: 'BVC',
+    childId: '1',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: '3',
+    date: '2024-06-10',
+    ageInDays: 61,
+    height: 56.2,
+    weight: 5200,
+    headCircumference: 38.5,
+    notes: '2-månaderskontroll',
+    measuredBy: 'BVC',
+    childId: '1',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
 export const updateChild = (child: Child) => {
   mockChild = { ...child };
 };
@@ -163,4 +239,66 @@ export const sortActivities = (activities: Activity[]) => {
     const bTime = b.details?.selectedTime || b.details?.startTime || '00:00';
     return bTime.localeCompare(aTime);
   });
+};
+
+// Calendar event helper functions
+export const addCalendarEvent = (event: CalendarEvent) => {
+  mockCalendarEvents = [event, ...mockCalendarEvents];
+};
+
+export const updateCalendarEvent = (id: string, updates: Partial<CalendarEvent>) => {
+  const index = mockCalendarEvents.findIndex(e => e.id === id);
+  if (index !== -1) {
+    mockCalendarEvents[index] = { ...mockCalendarEvents[index], ...updates };
+  }
+};
+
+export const deleteCalendarEvent = (id: string) => {
+  mockCalendarEvents = mockCalendarEvents.filter(e => e.id !== id);
+};
+
+// Growth measurement helper functions
+export const addGrowthMeasurement = (measurement: GrowthMeasurement) => {
+  mockGrowthMeasurements = [measurement, ...mockGrowthMeasurements];
+};
+
+export const updateGrowthMeasurement = (id: string, updates: Partial<GrowthMeasurement>) => {
+  const index = mockGrowthMeasurements.findIndex(m => m.id === id);
+  if (index !== -1) {
+    mockGrowthMeasurements[index] = { ...mockGrowthMeasurements[index], ...updates };
+  }
+};
+
+export const deleteGrowthMeasurement = (id: string) => {
+  mockGrowthMeasurements = mockGrowthMeasurements.filter(m => m.id !== id);
+};
+
+// Utility functions
+export const calculateAgeInDays = (birthDate: string, measurementDate: string): number => {
+  const birth = new Date(birthDate);
+  const measurement = new Date(measurementDate);
+  const diffTime = Math.abs(measurement.getTime() - birth.getTime());
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+};
+
+export const calculateAge = (birthDate: string): string => {
+  const birth = new Date(birthDate);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - birth.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 30) {
+    return `${diffDays} dagar`;
+  } else if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} månad${months !== 1 ? 'er' : ''}`;
+  } else {
+    const years = Math.floor(diffDays / 365);
+    const remainingDays = diffDays % 365;
+    const months = Math.floor(remainingDays / 30);
+    if (months > 0) {
+      return `${years} år, ${months} månad${months !== 1 ? 'er' : ''}`;
+    }
+    return `${years} år`;
+  }
 };
