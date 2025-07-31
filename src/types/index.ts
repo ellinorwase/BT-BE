@@ -8,7 +8,7 @@ export interface Child {
 
 export interface Activity {
   id: string;
-  type: 'feeding' | 'breastfeeding' | 'diaper' | 'sleep' | 'wakeup' | 'bedtime' | 'medicine';
+  type: 'feeding' | 'breastfeeding' | 'diaper' | 'sleep' | 'wakeup' | 'bedtime' | 'medicine' | 'bath';
   date: string;
   details: {
     selectedTime?: string;

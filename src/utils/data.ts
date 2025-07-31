@@ -134,6 +134,12 @@ export let mockActivities: Activity[] = [
     type: 'bedtime',
     date: yesterdayISO,
     details: { selectedTime: '19:00' }
+  },
+  {
+    id: 'y10',
+    type: 'bath',
+    date: yesterdayISO,
+    details: { selectedTime: '18:30' }
   }
 ];
 
